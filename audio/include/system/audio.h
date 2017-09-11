@@ -316,27 +316,6 @@ typedef enum {
     AUDIO_FORMAT_DTS_HD              = 0x0C000000UL,
     // IEC61937 is encoded audio wrapped in 16-bit PCM.
     AUDIO_FORMAT_IEC61937            = 0x0D000000UL,
-    AUDIO_FORMAT_EVRC                = 0x10000000UL,
-    AUDIO_FORMAT_QCELP               = 0x11000000UL,
-    AUDIO_FORMAT_WMA                 = 0x12000000UL,
-    AUDIO_FORMAT_WMA_PRO             = 0x13000000UL,
-    AUDIO_FORMAT_AAC_ADIF            = 0x14000000UL,
-    AUDIO_FORMAT_EVRCB               = 0x15000000UL,
-    AUDIO_FORMAT_EVRCWB              = 0x16000000UL,
-    AUDIO_FORMAT_AMR_WB_PLUS         = 0x17000000UL,
-    AUDIO_FORMAT_MP2                 = 0x18000000UL,
-    AUDIO_FORMAT_EVRCNW              = 0x19000000UL,
-    AUDIO_FORMAT_PCM_OFFLOAD         = 0x1A000000UL,
-    AUDIO_FORMAT_FLAC                = 0x1B000000UL,
-    AUDIO_FORMAT_ALAC                = 0x1C000000UL,
-    AUDIO_FORMAT_APE                 = 0x1D000000UL,
-    AUDIO_FORMAT_AAC_ADTS            = 0x1E000000UL,
-    AUDIO_FORMAT_DSD                 = 0x1F000000UL,
-    AUDIO_FORMAT_SBC                 = 0x20000000UL,
-    AUDIO_FORMAT_APTX                = 0x21000000UL,
-    AUDIO_FORMAT_APTX_HD             = 0x22000000UL,
-    AUDIO_FORMAT_AC4                 = 0x23000000UL,
-
     AUDIO_FORMAT_DOLBY_TRUEHD        = 0x0E000000UL,
     AUDIO_FORMAT_EVRC                = 0x10000000UL,
     AUDIO_FORMAT_QCELP               = 0x11000000UL,
@@ -933,45 +912,6 @@ typedef struct {
     audio_usage_t usage;
 } audio_offload_info_t;
 
-/* Information about BT SBC encoder configuration
- * This data is used between audio HAL module and
- * BT IPC library to configure DSP encoder
- */
-typedef struct {
-    uint32_t subband;    /* 4, 8 */
-    uint32_t blk_len;    /* 4, 8, 12, 16 */
-    uint16_t sampling_rate; /*44.1khz,48khz*/
-    uint8_t  channels;      /*0(Mono),1(Dual_mono),2(Stereo),3(JS)*/
-    uint8_t  alloc;         /*0(Loudness),1(SNR)*/
-    uint8_t  min_bitpool;   /* 2 */
-    uint8_t  max_bitpool;   /*53(44.1khz),51 (48khz) */
-    uint32_t bitrate;      /* 320kbps to 512kbps */
-} audio_sbc_encoder_config;
-
-
-/* Information about BT APTX encoder configuration
- * This data is used between audio HAL module and
- * BT IPC library to configure DSP encoder
- */
-typedef struct {
-    uint16_t sampling_rate;
-    uint8_t  channels;
-    uint32_t bitrate;
-} audio_aptx_encoder_config;
-
-
-/* Information about BT AAC encoder configuration
- * This data is used between audio HAL module and
- * BT IPC library to configure DSP encoder
- */
-typedef struct {
-    uint32_t enc_mode; /* LC, SBR, PS */
-    uint16_t format_flag; /* RAW, ADTS */
-    uint16_t channels; /* 1-Mono, 2-Stereo */
-    uint32_t sampling_rate;
-    uint32_t bitrate;
-} audio_aac_encoder_config;
-
 #define AUDIO_MAKE_OFFLOAD_INFO_VERSION(maj,min) \
             ((((maj) & 0xff) << 8) | ((min) & 0xff))
 
@@ -1186,11 +1126,11 @@ struct audio_port_config {
 
 
 /* max number of sampling rates in audio port */
-#define AUDIO_PORT_MAX_SAMPLING_RATES 32
+#define AUDIO_PORT_MAX_SAMPLING_RATES 16
 /* max number of channel masks in audio port */
-#define AUDIO_PORT_MAX_CHANNEL_MASKS 32
+#define AUDIO_PORT_MAX_CHANNEL_MASKS 16
 /* max number of audio formats in audio port */
-#define AUDIO_PORT_MAX_FORMATS 32
+#define AUDIO_PORT_MAX_FORMATS 16
 /* max number of gain controls in audio port */
 #define AUDIO_PORT_MAX_GAINS 16
 
@@ -1580,30 +1520,9 @@ static inline bool audio_is_valid_format(audio_format_t format)
     case AUDIO_FORMAT_OPUS:
     case AUDIO_FORMAT_AC3:
     case AUDIO_FORMAT_E_AC3:
-    case AUDIO_FORMAT_AC4:
     case AUDIO_FORMAT_DTS:
     case AUDIO_FORMAT_DTS_HD:
     case AUDIO_FORMAT_IEC61937:
-    case AUDIO_FORMAT_QCELP:
-    case AUDIO_FORMAT_EVRC:
-    case AUDIO_FORMAT_EVRCB:
-    case AUDIO_FORMAT_EVRCWB:
-    case AUDIO_FORMAT_AAC_ADIF:
-    case AUDIO_FORMAT_AMR_WB_PLUS:
-    case AUDIO_FORMAT_MP2:
-    case AUDIO_FORMAT_EVRCNW:
-    case AUDIO_FORMAT_FLAC:
-    case AUDIO_FORMAT_ALAC:
-    case AUDIO_FORMAT_APE:
-    case AUDIO_FORMAT_WMA:
-    case AUDIO_FORMAT_WMA_PRO:
-    case AUDIO_FORMAT_DSD:
-        return true;
-    case AUDIO_FORMAT_PCM_OFFLOAD:
-        if (format != AUDIO_FORMAT_PCM_16_BIT_OFFLOAD &&
-                format != AUDIO_FORMAT_PCM_24_BIT_OFFLOAD) {
-            return false;
-        }
     case AUDIO_FORMAT_DOLBY_TRUEHD:
     case AUDIO_FORMAT_QCELP:
     case AUDIO_FORMAT_EVRC:
